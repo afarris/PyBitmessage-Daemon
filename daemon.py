@@ -1380,7 +1380,8 @@ def UI(usrInput): #Main user menu
         usrPrompt = 1
         main()
     elif usrInput == "listsubscriptions": #Unsubscribe from an address
-        listSubscriptions()
+        res = listSubscriptions()
+        if res == 20: print '\n     Error: API function not supported.\n'
         usrPrompt = 1
         main()
         
