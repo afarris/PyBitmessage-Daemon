@@ -505,25 +505,28 @@ def unsubscribe():
 
 def listSubscriptions():
     global usrPrompt
-    #jsonAddresses = json.loads(api.listSubscriptions())
-    #numAddresses = len(jsonAddresses['addresses']) #Number of addresses
-    print '\nLabel, Address, Enabled\n'
     try:
-        print api.listSubscriptions()
+        response = api.listSubscriptions()
+        if "API Error" in response:
+            return getAPIErrorCode(response)
+        subs = json.loads(response)
+        print
+        print '--------------------------------------------------------------------------------'
+        print '|             Label              |                Address                | On? |'
+        print '|--------------------------------|---------------------------------------|-----|'
+        for entry in subs['subscriptions']:
+            label = entry['label'].decode('base64')
+            address = entry['address']
+            enabled = "Yes" if entry['enabled'] else "No"
+            if (len(label) > 30): label = label[:27] + '...'
+            print '| ' + label.ljust(30) + ' | ' + address.ljust(37) + ' | ' + enabled.ljust(3) + ' |'
+        print '--------------------------------------------------------------------------------'
+        print
+
     except:
         print '\n     Connection Error\n'
         usrPrompt = 0
         main()
-        
-    '''for addNum in range (0, numAddresses): #processes all of the addresses and lists them out
-        label = jsonAddresses['addresses'][addNum]['label']
-        address = jsonAddresses['addresses'][addNum]['address']
-        enabled = jsonAddresses['addresses'][addNum]['enabled']
-
-        print label, address, enabled
-    '''
-    print ' '
-
 
 def listAdd(): #Lists all of the addresses and their info
     global usrPrompt
@@ -1278,7 +1281,7 @@ def UI(usrInput): #Main user menu
         print '     |------------------------|----------------------------------------------|'
         print '     | subscribe              | Subscribes to an address                     |'
         print '     | unsubscribe            | Unsubscribes from an address                 |'
-       #print '     | listSubscriptions      | Lists all of the subscriptions.              |'
+        print '     | listSubscriptions      | Lists all of the subscriptions.              |'
         print '     |------------------------|----------------------------------------------|'
         print '     | inbox                  | Lists the message information for the inbox  |'
         print '     | outbox                 | Lists the message information for the outbox |'
